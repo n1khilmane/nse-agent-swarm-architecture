@@ -3,11 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>The Navier–Stokes problem, solved by OpenAI</title>
-<meta name="description" content="How OpenAI's AI agents were organised to solve the Navier–Stokes problem, explained simply, with an interactive walkthrough.">
+<title>the navier–stokes problem, solved by openai</title>
+<meta name="description" content="how openai's ai agents were organised to solve the navier–stokes problem, explained simply, with an interactive walkthrough.">
 <meta property="og:type" content="article">
-<meta property="og:title" content="The Navier–Stokes problem, solved by OpenAI">
-<meta property="og:description" content="How the AI agents were organised, explained simply. Interactive walkthrough, no maths.">
+<meta property="og:title" content="the navier–stokes problem, solved by openai">
+<meta property="og:description" content="how the ai agents were organised, explained simply. interactive walkthrough, no maths.">
 <meta property="og:image" content="https://nikhilmane.com/nse-agent-swarm-architecture/assets/share-card.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
@@ -17,7 +17,7 @@
   :root{--bg:#fbfbf9;--fg:#1a1a1a;--muted:#5b5b57;--line:#e4e4df;--accent:#0f766e;--accent-soft:#e6f4f1;--card:#fff;--dim:#c9c9c3;--blue:#2a78d6;--blue-soft:#dce9f9;--track:#e9e9e4}
   *{box-sizing:border-box}
   html{-webkit-text-size-adjust:100%}
-  body{margin:0;background:var(--bg);color:var(--fg);font:17px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif}
+  body{margin:0;text-transform:lowercase;background:var(--bg);color:var(--fg);font:17px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif}
   a{color:var(--accent)}
   .wrap{max-width:720px;margin:0 auto;padding:0 20px}
   .wide{max-width:1040px;margin:0 auto;padding:0 20px}
@@ -33,23 +33,25 @@
   /* explorer */
   .explorer{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden}
   .graph{display:block;width:100%;height:auto;background:#fff}
-  .graph .node rect{fill:#fff;stroke:var(--dim);stroke-width:1.5;transition:all .35s}
-  .graph .node text{font:600 15px/1 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;fill:#8a8a85;transition:fill .35s}
-  .graph .node text.sub{font-weight:400;font-size:12.5px;fill:#a3a39e}
-  .graph .node.on rect{stroke:var(--accent);stroke-width:2.5;fill:var(--accent-soft)}
-  .graph .node.on text{fill:#0b3d38}.graph .node.on text.sub{fill:#2b6b64}
-  .graph .node{cursor:pointer}
-  .graph .edge{fill:none;stroke:var(--dim);stroke-width:1.6;transition:stroke .35s}
-  .graph .edge.on{stroke:var(--accent);stroke-width:2.6;stroke-dasharray:7 6;animation:march 1s linear infinite}
-  .graph .edge.ret{stroke-dasharray:4 5}
-  .graph .edge.ret.on{stroke-dasharray:7 6}
-  @keyframes march{to{stroke-dashoffset:-13}}
+  .graph .node{cursor:pointer;opacity:.38;transition:opacity .4s}
+  .graph .node.on{opacity:1}
+  .graph .node rect{stroke-width:1.6;transition:stroke-width .3s}
+  .graph .node.on rect{stroke-width:2.6;filter:url(#glow)}
+  .graph .node text{font:600 15px/1 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;fill:#14213d}
+  .graph .node text.sub{font-weight:500;font-size:12.5px;fill:#4b5563}
+  .graph .node text.ico{font-size:17px}
+  .graph .edge{fill:none;stroke:#c3c8d1;stroke-width:2;transition:stroke .35s,stroke-width .35s}
+  .graph .edge.on{stroke:var(--accent);stroke-width:3.2}
+  .graph .edge.ret{stroke-dasharray:5 6}
   .graph .elabel{font:12px -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;fill:#b0b0aa;transition:fill .35s}
-  .graph .elabel.on{fill:var(--accent);font-weight:600}
-  .graph .box{fill:none;stroke:#e6d7b8;stroke-dasharray:5 5}
-  .graph .boxlabel{font:12px -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;fill:#b0895a}
-  .graph .arrow{fill:var(--dim);transition:fill .35s}.graph .arrow.on{fill:var(--accent)}
-  .panel{padding:18px 20px 20px;border-top:1px solid var(--line)}
+  .graph .elabel.on{fill:var(--accent);font-weight:700}
+  .graph .zone{stroke-dasharray:6 5;stroke-width:1.5}
+  .graph .zonelabel{font:700 12px -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif}
+  .graph .arrow{fill:#c3c8d1;transition:fill .35s}.graph .arrow.on{fill:var(--accent)}
+  .graph .pulse{fill:var(--accent);stroke:#fff;stroke-width:2}
+  .legend{display:flex;flex-wrap:wrap;gap:8px 16px;padding:10px 18px 0;font-size:13px;color:var(--muted)}
+  .legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:6px;vertical-align:-1px;border:1.5px solid}
+  .panel{padding:16px 20px 20px;border-top:1px solid var(--line)}
   .step-head{display:flex;align-items:baseline;gap:12px;flex-wrap:wrap}
   .step-num{font-size:13px;font-weight:700;color:var(--accent);letter-spacing:.06em}
   .step-title{font-size:20px;font-weight:700;margin:0}
@@ -65,20 +67,7 @@
   .progress i{display:block;height:100%;width:0;background:var(--accent)}
   .progress i.run{animation:fill var(--dur) linear forwards}
   @keyframes fill{to{width:100%}}
-
-  /* mobile flow */
-  .flow{list-style:none;margin:0;padding:18px 18px 4px;display:none}
-  .flow li{position:relative;padding:0 0 18px 44px;cursor:pointer}
-  .flow li::before{content:"";position:absolute;left:15px;top:30px;bottom:-4px;width:2px;background:var(--track)}
-  .flow li:last-child::before{display:none}
-  .flow .n{position:absolute;left:0;top:2px;width:32px;height:32px;border-radius:50%;background:var(--track);color:var(--muted);font:700 13px/32px inherit;text-align:center}
-  .flow li.on .n{background:var(--accent);color:#fff;box-shadow:0 0 0 0 rgba(15,118,110,.45);animation:pulse 1.6s ease-out infinite}
-  @keyframes pulse{to{box-shadow:0 0 0 12px rgba(15,118,110,0)}}
-  .flow .t{font-weight:700;font-size:17px;padding-top:6px;color:var(--muted)}
-  .flow li.on .t{color:var(--fg)}
-  .flow .x{display:none;font-size:16px;margin-top:6px}
-  .flow li.on .x{display:block}
-  @media (max-width:760px){.graph{display:none}.flow{display:block}.panel .step-head,.panel .step-text{display:none}.step-text{min-height:0}}
+  @media (max-width:760px){.step-text{min-height:0}.dots{width:100%;margin-left:0;justify-content:center;padding-top:4px}}
 
   /* timeline */
   .tl{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:22px 20px 18px}
@@ -128,7 +117,7 @@
   footer{margin:56px 0 40px;padding-top:20px;border-top:1px solid var(--line);font-size:14px;color:var(--muted)}
   .src li{margin:6px 0}
   .more{background:var(--accent-soft);border:1px solid #cfe7e2;border-radius:12px;padding:14px 18px;font-size:15px;margin:18px 0}
-  @media (prefers-reduced-motion:reduce){.graph .edge.on,.flow li.on .n,.marks li.on .dot{animation:none}}
+  @media (prefers-reduced-motion:reduce){.marks li.on .dot{animation:none}}
 </style>
 </head>
 <body>
@@ -162,15 +151,15 @@
   <p class="hint" style="max-width:720px;margin-left:auto;margin-right:auto">Press play, or tap any step. Each step lights up the part of the system it talks about.</p>
 
   <div class="explorer" id="explorer">
-    <svg class="graph" viewBox="0 0 1000 540" role="img" aria-label="Map of the agent system" id="graph"></svg>
-    <ol class="flow" id="flow"></ol>
+    <svg class="graph" role="img" aria-label="map of the agent system" id="graph"></svg>
+    <div class="legend" id="legend"></div>
     <div class="panel">
-      <div class="step-head"><span class="step-num" id="snum">STEP 1 OF 8</span><h3 class="step-title" id="stitle"></h3></div>
+      <div class="step-head"><span class="step-num" id="snum">step 1 of 8</span><h3 class="step-title" id="stitle"></h3></div>
       <p class="step-text" id="stext"></p>
       <div class="controls">
-        <button class="btn" id="prev" aria-label="Previous step">‹ Back</button>
-        <button class="btn primary" id="play">❚❚ Pause</button>
-        <button class="btn" id="next" aria-label="Next step">Next ›</button>
+        <button class="btn" id="prev" aria-label="previous step">‹ back</button>
+        <button class="btn primary" id="play">❚❚ pause</button>
+        <button class="btn" id="next" aria-label="next step">next ›</button>
         <div class="dots" id="dots"></div>
       </div>
       <div class="progress"><i id="prog" style="--dur:6s"></i></div>
@@ -188,9 +177,9 @@
       <div class="step-head"><span class="step-num" id="tnum"></span><h3 class="step-title" id="ttitle"></h3></div>
       <p class="step-text" id="ttext" style="min-height:2.4em"></p>
       <div class="controls">
-        <button class="btn" id="tprev">‹ Back</button>
-        <button class="btn primary" id="tplay">❚❚ Pause</button>
-        <button class="btn" id="tnext">Next ›</button>
+        <button class="btn" id="tprev">‹ back</button>
+        <button class="btn primary" id="tplay">❚❚ pause</button>
+        <button class="btn" id="tnext">next ›</button>
       </div>
     </div>
   </div>
@@ -245,80 +234,138 @@
 
 <script>
 (function(){
-  var NW=160,NH=56;
+  var KIND={
+    people:{stroke:'#64748b',fill:'#f1f5f9',label:'people'},
+    agent:{stroke:'#0f9d76',fill:'#d7f5ea',label:'ai agents'},
+    tool:{stroke:'#d97706',fill:'#fef3c7',label:'tools'},
+    doc:{stroke:'#7c3aed',fill:'#ede9fe',label:'the write-up'},
+    check:{stroke:'#e11d48',fill:'#ffe4e6',label:'checks'}
+  };
   var NODES=[
-    {id:'q',label:'The question',sub:'asked 4 ways',x:100,y:270},
-    {id:'team',label:'OpenAI team',sub:'steers, no maths',x:300,y:80},
-    {id:'launch',label:'Group launcher',sub:'~10,000 agents',x:300,y:270},
-    {id:'euler',label:'Warm-up group',sub:'~100 agents · 50 h',x:300,y:460},
-    {id:'model',label:'The model',sub:'newer than GPT-6 Astra',x:500,y:80},
-    {id:'groups',label:'Agent groups',sub:'talk only inside group',x:500,y:270},
-    {id:'tools',label:'Tools',sub:'web snapshot + code',x:500,y:460},
-    {id:'codex',label:'Codex',sub:'merges best ideas',x:700,y:270},
-    {id:'paper',label:'Write-up',sub:'222 pages',x:900,y:270},
-    {id:'lean',label:'Lean check',sub:'GPT-6 Astra · 17 h',x:900,y:460},
-    {id:'cmp',label:'Final check',sub:'vs official question',x:700,y:460}
+    {id:'q',kind:'people',ico:'❓',label:'the question',sub:'asked 4 ways',d:[100,270]},
+    {id:'team',kind:'people',ico:'👥',label:'openai team',sub:'steers, no maths',d:[300,80]},
+    {id:'launch',kind:'agent',ico:'🚀',label:'group launcher',sub:'~10,000 agents',d:[300,270]},
+    {id:'euler',kind:'agent',ico:'🧪',label:'warm-up group',sub:'~100 agents · 50 h',d:[300,460]},
+    {id:'model',kind:'agent',ico:'🧠',label:'the model',sub:'beyond gpt-6 astra',d:[500,80]},
+    {id:'groups',kind:'agent',ico:'🤖',label:'agent groups',sub:'talk only in-group',d:[500,270]},
+    {id:'tools',kind:'tool',ico:'🛠️',label:'tools',sub:'web copy + code',d:[500,460]},
+    {id:'codex',kind:'tool',ico:'🔀',label:'codex',sub:'merges best ideas',d:[700,270]},
+    {id:'paper',kind:'doc',ico:'📄',label:'write-up',sub:'222 pages',d:[900,270]},
+    {id:'lean',kind:'check',ico:'🧮',label:'lean check',sub:'gpt-6 astra · 17 h',d:[900,460]},
+    {id:'cmp',kind:'check',ico:'✅',label:'final check',sub:'vs official question',d:[700,460]}
   ];
-  var EDGES=[
-    {id:'q-launch',pts:[[180,270],[218,270]],label:'',at:[199,258]},
+  var ORDER=['q','team','launch','euler','model','groups','tools','codex','paper','lean','cmp'];
+  var EDGES_D=[
+    {id:'q-launch',pts:[[180,270],[218,270]]},
     {id:'team-launch',pts:[[300,108],[300,240]],label:'steer',at:[308,178]},
-    {id:'launch-groups',pts:[[380,270],[418,270]],label:'',at:[399,258]},
+    {id:'launch-groups',pts:[[380,270],[418,270]]},
     {id:'launch-euler',pts:[[300,298],[300,430]],label:'warm-up',at:[308,368]},
-    {id:'euler-groups',pts:[[380,470],[440,470],[440,292],[418,292]],label:'Euler answer',at:[448,392]},
+    {id:'euler-groups',pts:[[380,470],[440,470],[440,292],[418,292]],label:'euler answer',at:[448,392]},
     {id:'model-groups',pts:[[500,108],[500,240]],label:'thinks',at:[508,178]},
     {id:'groups-tools',pts:[[500,298],[500,430]],label:'reads · runs code',at:[508,368]},
-    {id:'groups-codex',pts:[[580,270],[618,270]],label:'',at:[599,258]},
+    {id:'groups-codex',pts:[[580,270],[618,270]]},
     {id:'codex-groups',pts:[[680,242],[680,190],[560,190],[560,240]],label:'re-prompt',at:[572,183],ret:true},
-    {id:'codex-paper',pts:[[780,270],[818,270]],label:'',at:[799,258]},
+    {id:'codex-paper',pts:[[780,270],[818,270]]},
     {id:'paper-lean',pts:[[900,298],[900,430]],label:'translate',at:[908,368]},
-    {id:'lean-cmp',pts:[[820,460],[782,460]],label:'',at:[801,448]}
+    {id:'lean-cmp',pts:[[820,460],[782,460]]}
   ];
-  var BOXES=[
-    {x:208,y:40,w:384,h:476,label:'the 88-hour swarm run'},
-    {x:608,y:420,w:384,h:96,label:'the 17-hour check'}
+  var ZONES_D=[
+    {x:208,y:40,w:384,h:476,label:'the 88-hour swarm run',stroke:'#f59e0b',fill:'#fffbeb'},
+    {x:608,y:420,w:384,h:96,label:'the 17-hour check',stroke:'#fb7185',fill:'#fff1f2'}
   ];
   var STEPS=[
-    {title:'Ask the question four ways',nodes:['q','launch'],edges:['q-launch'],text:'The official problem can be settled in four ways: two would prove fluids always stay smooth, two would show they can break. OpenAI wrote all four as prompts, so nobody had to guess the answer first.'},
-    {title:'Split thousands of agents into groups',nodes:['launch','groups','team'],edges:['launch-groups','team-launch'],text:'Groups of agents were launched, each with one of the four wordings. Agents could only message others in their own group, which kept each group thinking differently. The winning group had about 10,000 agents running at once.'},
-    {title:'What one agent is',nodes:['model','groups','tools'],edges:['model-groups','groups-tools'],text:'Every agent is the same recipe: a model newer than GPT-6 Astra, a saved copy of the internet to read, and a place to run code and test ideas. Nothing else.'},
-    {title:'Practise on an easier problem first',nodes:['launch','euler','groups'],edges:['launch-euler','euler-groups'],text:'About 100 agents spent 50 hours on a simpler cousin of the problem (the Euler equations) and found a case where the flow breaks. That answer was handed to the big groups as a starting point.'},
-    {title:'Pass the best ideas between groups',nodes:['groups','codex'],edges:['groups-codex','codex-groups'],text:'Groups never talk to each other. Instead the team used Codex to read what each group had found, keep the useful parts, and feed them back as new prompts. This is the only place ideas crossed groups.'},
-    {title:'Write it up',nodes:['codex','paper'],edges:['codex-paper'],text:'The merged argument became two papers: 166 pages for Navier–Stokes and 57 for Euler. This is the part most people cannot read, and you do not need to.'},
-    {title:'Translate it so a computer can check it',nodes:['paper','lean'],edges:['paper-lean'],text:'GPT-6 Astra spent 17 hours rewriting the papers in Lean 4, a language where a program verifies every logical step. 2,659 files, zero steps left unproven.'},
-    {title:'Double-check against the official question',nodes:['lean','cmp'],edges:['lean-cmp'],text:'A separate tool, Comparator, confirms the proof answers the exact question as written down by someone else, using only three standard rules of logic. Anyone can re-run it.'}
+    {title:'ask the question four ways',nodes:['q','launch'],edges:['q-launch'],text:'the official problem can be settled in four ways: two would prove fluids always stay smooth, two would show they can break. openai wrote all four as prompts, so nobody had to guess the answer first.'},
+    {title:'split thousands of agents into groups',nodes:['launch','groups','team'],edges:['launch-groups','team-launch'],text:'groups of agents were launched, each with one of the four wordings. agents could only message others in their own group, which kept each group thinking differently. the winning group had about 10,000 agents running at once.'},
+    {title:'what one agent is',nodes:['model','groups','tools'],edges:['model-groups','groups-tools'],text:'every agent is the same recipe: a model newer than gpt-6 astra, a saved copy of the internet to read, and a place to run code and test ideas. nothing else.'},
+    {title:'practise on an easier problem first',nodes:['launch','euler','groups'],edges:['launch-euler','euler-groups'],text:'about 100 agents spent 50 hours on a simpler cousin of the problem (the euler equations) and found a case where the flow breaks. that answer was handed to the big groups as a starting point.'},
+    {title:'pass the best ideas between groups',nodes:['groups','codex'],edges:['groups-codex','codex-groups'],text:'groups never talk to each other. instead the team used codex to read what each group had found, keep the useful parts, and feed them back as new prompts. this is the only place ideas crossed groups.'},
+    {title:'write it up',nodes:['codex','paper'],edges:['codex-paper'],text:'the merged argument became two papers: 166 pages for navier–stokes and 57 for euler. this is the part most people cannot read, and you do not need to.'},
+    {title:'translate it so a computer can check it',nodes:['paper','lean'],edges:['paper-lean'],text:'gpt-6 astra spent 17 hours rewriting the papers in lean 4, a language where a program verifies every logical step. 2,659 files, zero steps left unproven.'},
+    {title:'double-check against the official question',nodes:['lean','cmp'],edges:['lean-cmp'],text:'a separate tool, comparator, confirms the proof answers the exact question as written down by someone else, using only three standard rules of logic. anyone can re-run it.'}
   ];
   var NS='http://www.w3.org/2000/svg';
   function el(n,a,t){var e=document.createElementNS(NS,n);for(var k in a)e.setAttribute(k,a[k]);if(t!=null)e.textContent=t;return e;}
   var svg=document.getElementById('graph');
-  var defs=el('defs');var m=el('marker',{id:'ah',viewBox:'0 0 10 10',refX:'9',refY:'5',markerWidth:'7',markerHeight:'7',orient:'auto-start-reverse'});m.appendChild(el('path',{d:'M0,0 L10,5 L0,10 z',class:'arrow'}));defs.appendChild(m);
-  var m2=el('marker',{id:'ah-on',viewBox:'0 0 10 10',refX:'9',refY:'5',markerWidth:'7',markerHeight:'7',orient:'auto-start-reverse'});m2.appendChild(el('path',{d:'M0,0 L10,5 L0,10 z',class:'arrow on'}));defs.appendChild(m2);svg.appendChild(defs);
-  BOXES.forEach(function(b){svg.appendChild(el('rect',{x:b.x,y:b.y,width:b.w,height:b.h,rx:12,class:'box'}));svg.appendChild(el('text',{x:b.x+12,y:b.y+b.h-8,class:'boxlabel'},b.label));});
-  var edgeEls={},labelEls={},nodeEls={};
-  EDGES.forEach(function(e){var d=e.pts.map(function(p,i){return (i?'L':'M')+p[0]+','+p[1];}).join(' ');var p=el('path',{d:d,class:'edge'+(e.ret?' ret':''),'marker-end':'url(#ah)'});svg.appendChild(p);edgeEls[e.id]=p;var t=el('text',{x:e.at[0],y:e.at[1],class:'elabel'},e.label);svg.appendChild(t);labelEls[e.id]=t;});
-  NODES.forEach(function(n){var g=el('g',{class:'node','data-id':n.id});g.appendChild(el('rect',{x:n.x-NW/2,y:n.y-NH/2,width:NW,height:NH,rx:10}));g.appendChild(el('text',{x:n.x,y:n.y-4,'text-anchor':'middle'},n.label));g.appendChild(el('text',{x:n.x,y:n.y+16,'text-anchor':'middle',class:'sub'},n.sub));svg.appendChild(g);nodeEls[n.id]=g;g.addEventListener('click',function(){var i=STEPS.findIndex(function(s){return s.nodes.indexOf(n.id)>=0;});if(i>=0){go(i);stop();}});});
-  var flow=document.getElementById('flow');
-  STEPS.forEach(function(s,i){var li=document.createElement('li');li.innerHTML='<span class="n">'+(i+1)+'</span><div class="t">'+s.title+'</div><div class="x">'+s.text+'</div>';li.addEventListener('click',function(){go(i);stop();});flow.appendChild(li);});
+  var edgeEls={},labelEls={},nodeEls={},pulses={};
+  var mobileMQ=window.matchMedia('(max-width:760px)');
+  function mobileLayout(){
+    var W=360,NW=240,NH=52,GAP=26,TOP=40,cx=180;
+    var pos={};ORDER.forEach(function(id,i){pos[id]=[cx,TOP+NH/2+i*(NH+GAP)];});
+    var L=26,Rl=334;
+    function side(from,to,lane,so,to2){var a=pos[from],b=pos[to];var x=lane==='l'?L:Rl;var sx=lane==='l'?cx-NW/2:cx+NW/2;return [[sx,a[1]+(so||0)],[x,a[1]+(so||0)],[x,b[1]+(to2||0)],[sx+(lane==='l'?-4:4),b[1]+(to2||0)]];}
+    function vert(from,to){var a=pos[from],b=pos[to];return [[a[0],a[1]+NH/2],[b[0],b[1]-NH/2-4]];}
+    var edges=[
+      {id:'q-launch',pts:side('q','launch','l',0,-10)},
+      {id:'team-launch',pts:vert('team','launch')},
+      {id:'launch-euler',pts:vert('launch','euler')},
+      {id:'launch-groups',pts:side('launch','groups','r',0,-10)},
+      {id:'euler-groups',pts:side('euler','groups','l',0,10)},
+      {id:'model-groups',pts:vert('model','groups')},
+      {id:'groups-tools',pts:vert('groups','tools')},
+      {id:'groups-codex',pts:side('groups','codex','r',0,0)},
+      {id:'codex-groups',pts:side('codex','groups','l',10,0),ret:true},
+      {id:'codex-paper',pts:vert('codex','paper')},
+      {id:'paper-lean',pts:vert('paper','lean')},
+      {id:'lean-cmp',pts:vert('lean','cmp')}
+    ];
+    var H=TOP+ORDER.length*(NH+GAP)+30;
+    var zones=[
+      {x:48,y:pos.team[1]-NH/2-10,w:264,h:pos.tools[1]+NH/2+30-(pos.team[1]-NH/2-10),label:'the 88-hour swarm run',stroke:'#f59e0b',fill:'#fffbeb'},
+      {x:48,y:pos.lean[1]-NH/2-10,w:264,h:pos.cmp[1]+NH/2+30-(pos.lean[1]-NH/2-10),label:'the 17-hour check',stroke:'#fb7185',fill:'#fff1f2'}
+    ];
+    return {vb:[0,0,W,H],NW:NW,NH:NH,pos:pos,edges:edges,zones:zones,labels:false};
+  }
+  function desktopLayout(){
+    var pos={};NODES.forEach(function(n){pos[n.id]=n.d;});
+    return {vb:[0,0,1000,540],NW:160,NH:56,pos:pos,edges:EDGES_D,zones:ZONES_D,labels:true};
+  }
+  var cur=0,timer=null,playing=true,DUR=6000,reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function render(){
+    var Lay=mobileMQ.matches?mobileLayout():desktopLayout();
+    while(svg.firstChild)svg.removeChild(svg.firstChild);
+    edgeEls={};labelEls={};nodeEls={};pulses={};
+    svg.setAttribute('viewBox',Lay.vb.join(' '));
+    var defs=el('defs');
+    var pat=el('pattern',{id:'grid',width:'24',height:'24',patternUnits:'userSpaceOnUse'});pat.appendChild(el('path',{d:'M24 0H0V24',fill:'none',stroke:'#eef0f3','stroke-width':'1'}));defs.appendChild(pat);
+    var f=el('filter',{id:'glow',x:'-20%',y:'-20%',width:'140%',height:'140%'});f.appendChild(el('feDropShadow',{dx:'0',dy:'2',stdDeviation:'4','flood-color':'#0f766e','flood-opacity':'.35'}));defs.appendChild(f);
+    [['ah','arrow'],['ah-on','arrow on']].forEach(function(m){var mk=el('marker',{id:m[0],viewBox:'0 0 10 10',refX:'9',refY:'5',markerWidth:'6',markerHeight:'6',orient:'auto-start-reverse'});mk.appendChild(el('path',{d:'M0,0 L10,5 L0,10 z',class:m[1]}));defs.appendChild(mk);});
+    svg.appendChild(defs);
+    svg.appendChild(el('rect',{x:0,y:0,width:Lay.vb[2],height:Lay.vb[3],fill:'url(#grid)'}));
+    Lay.zones.forEach(function(z){svg.appendChild(el('rect',{x:z.x,y:z.y,width:z.w,height:z.h,rx:14,class:'zone',stroke:z.stroke,fill:z.fill}));svg.appendChild(el('text',{x:z.x+12,y:z.y+z.h-9,class:'zonelabel',fill:z.stroke},z.label));});
+    Lay.edges.forEach(function(e){var d=e.pts.map(function(p,i){return (i?'L':'M')+p[0]+','+p[1];}).join(' ');var p=el('path',{d:d,id:'p-'+e.id,class:'edge'+(e.ret?' ret':''),'marker-end':'url(#ah)'});svg.appendChild(p);edgeEls[e.id]=p;
+      if(Lay.labels&&e.label){var t=el('text',{x:e.at[0],y:e.at[1],class:'elabel'},e.label);svg.appendChild(t);labelEls[e.id]=t;}});
+    NODES.forEach(function(n){var k=KIND[n.kind],c=Lay.pos[n.id],W=Lay.NW,H=Lay.NH;var g=el('g',{class:'node'});
+      g.appendChild(el('rect',{x:c[0]-W/2,y:c[1]-H/2,width:W,height:H,rx:12,fill:k.fill,stroke:k.stroke}));
+      g.appendChild(el('text',{x:c[0]-W/2+14,y:c[1]+6,class:'ico'},n.ico));
+      g.appendChild(el('text',{x:c[0]-W/2+44,y:c[1]-3},n.label));
+      g.appendChild(el('text',{x:c[0]-W/2+44,y:c[1]+15,class:'sub'},n.sub));
+      svg.appendChild(g);nodeEls[n.id]=g;
+      g.addEventListener('click',function(){var i=STEPS.findIndex(function(s){return s.nodes.indexOf(n.id)>=0;});if(i>=0){go(i);stop();}});});
+    Lay.edges.forEach(function(e){var c=el('circle',{r:5,class:'pulse',visibility:'hidden'});var am=el('animateMotion',{dur:'1.6s',repeatCount:'indefinite'});var mp=document.createElementNS(NS,'mpath');mp.setAttributeNS('http://www.w3.org/1999/xlink','xlink:href','#p-'+e.id);am.appendChild(mp);c.appendChild(am);svg.appendChild(c);pulses[e.id]=c;});
+    go(cur,true);
+  }
+  var legend=document.getElementById('legend');
+  for(var k in KIND){var sp=document.createElement('span');sp.innerHTML='<i style="background:'+KIND[k].fill+';border-color:'+KIND[k].stroke+'"></i>'+KIND[k].label;legend.appendChild(sp);}
   var dots=document.getElementById('dots');
-  STEPS.forEach(function(s,i){var b=document.createElement('button');b.setAttribute('aria-label','Step '+(i+1));b.addEventListener('click',function(){go(i);stop();});dots.appendChild(b);});
-  var cur=0,timer=null,playing=true,DUR=6000;
+  STEPS.forEach(function(s,i){var b=document.createElement('button');b.setAttribute('aria-label','step '+(i+1));b.addEventListener('click',function(){go(i);stop();});dots.appendChild(b);});
   var prog=document.getElementById('prog');
-  function go(i){cur=(i+STEPS.length)%STEPS.length;var s=STEPS[cur];
+  function go(i,silent){cur=(i+STEPS.length)%STEPS.length;var s=STEPS[cur];
     for(var id in nodeEls)nodeEls[id].classList.toggle('on',s.nodes.indexOf(id)>=0);
-    for(var id in edgeEls){var on=s.edges.indexOf(id)>=0;edgeEls[id].classList.toggle('on',on);edgeEls[id].setAttribute('marker-end',on?'url(#ah-on)':'url(#ah)');labelEls[id].classList.toggle('on',on);}
-    document.getElementById('snum').textContent='STEP '+(cur+1)+' OF '+STEPS.length;
+    for(var id in edgeEls){var on=s.edges.indexOf(id)>=0;edgeEls[id].classList.toggle('on',on);edgeEls[id].setAttribute('marker-end',on?'url(#ah-on)':'url(#ah)');if(labelEls[id])labelEls[id].classList.toggle('on',on);if(pulses[id])pulses[id].setAttribute('visibility',on&&!reduce?'visible':'hidden');}
+    document.getElementById('snum').textContent='step '+(cur+1)+' of '+STEPS.length;
     document.getElementById('stitle').textContent=s.title;document.getElementById('stext').textContent=s.text;
     Array.prototype.forEach.call(dots.children,function(b,j){b.classList.toggle('on',j===cur);});
-    Array.prototype.forEach.call(flow.children,function(li,j){li.classList.toggle('on',j===cur);});
-    prog.classList.remove('run');void prog.offsetWidth;if(playing)prog.classList.add('run');
+    if(!silent){prog.classList.remove('run');void prog.offsetWidth;if(playing)prog.classList.add('run');}
   }
   function tick(){timer=setTimeout(function(){go(cur+1);tick();},DUR);}
-  function start(){playing=true;document.getElementById('play').textContent='❚❚ Pause';go(cur);clearTimeout(timer);tick();}
-  function stop(){playing=false;clearTimeout(timer);document.getElementById('play').textContent='▶ Play';prog.classList.remove('run');prog.style.width='0';}
+  function start(){playing=true;document.getElementById('play').textContent='❚❚ pause';go(cur);clearTimeout(timer);tick();}
+  function stop(){playing=false;clearTimeout(timer);document.getElementById('play').textContent='▶ play';prog.classList.remove('run');prog.style.width='0';}
   document.getElementById('play').addEventListener('click',function(){playing?stop():start();});
   document.getElementById('prev').addEventListener('click',function(){go(cur-1);stop();});
   document.getElementById('next').addEventListener('click',function(){go(cur+1);stop();});
-  var reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  if(reduce){playing=false;go(0);stop();}else{start();}
+  render();
+  if(mobileMQ.addEventListener)mobileMQ.addEventListener('change',render);else mobileMQ.addListener(render);
+  if(reduce){playing=false;stop();}else{start();}
   var io=new IntersectionObserver(function(en){en.forEach(function(x){if(!x.isIntersecting&&playing){clearTimeout(timer);}else if(x.isIntersecting&&playing){clearTimeout(timer);go(cur);tick();}});},{threshold:.2});
   io.observe(document.getElementById('explorer'));
 
@@ -337,11 +384,11 @@
   function tgo(i){tcur=(i+TL.length)%TL.length;var t=TL[tcur];
     Array.prototype.forEach.call(marks.children,function(li,j){li.classList.toggle('on',j===tcur);li.classList.toggle('done',j<tcur);});
     document.getElementById('tprog').style.width=(tcur/(TL.length-1)*100)+'%';
-    document.getElementById('tnum').textContent=t.d.toUpperCase()+(t.h?' · '+t.h.toUpperCase():'');
+    document.getElementById('tnum').textContent=t.d+(t.h?' · '+t.h:'');
     document.getElementById('ttitle').textContent=t.title;document.getElementById('ttext').textContent=t.text;}
   function ttick(){ttimer=setTimeout(function(){tgo(tcur+1);ttick();},TDUR);}
-  function tstart(){tplaying=true;document.getElementById('tplay').textContent='❚❚ Pause';clearTimeout(ttimer);ttick();}
-  function tstop(){tplaying=false;clearTimeout(ttimer);document.getElementById('tplay').textContent='▶ Play';}
+  function tstart(){tplaying=true;document.getElementById('tplay').textContent='❚❚ pause';clearTimeout(ttimer);ttick();}
+  function tstop(){tplaying=false;clearTimeout(ttimer);document.getElementById('tplay').textContent='▶ play';}
   document.getElementById('tplay').addEventListener('click',function(){tplaying?tstop():tstart();});
   document.getElementById('tprev').addEventListener('click',function(){tgo(tcur-1);tstop();});
   document.getElementById('tnext').addEventListener('click',function(){tgo(tcur+1);tstop();});
