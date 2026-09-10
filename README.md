@@ -1,5 +1,7 @@
 # OpenAI Navier–Stokes Agent Swarm — architecture map
 
+**Explainer page (no math):** https://nikhilmane.com/nse-agent-swarm-architecture/
+
 Interactive [Archify](https://github.com/tt-a1i/archify) architecture diagram of how OpenAI's
 agent swarm produced the finite-time blowup proofs published in
 [openai/NavierStokesAndEuler](https://github.com/openai/NavierStokesAndEuler).
@@ -12,7 +14,13 @@ agent swarm produced the finite-time blowup proofs published in
 
 | File | What |
 |---|---|
-| `nse-agent-swarm.architecture.html` | Self-contained interactive viewer (dark/light, guided views, source links) |
+| `index.html` | Explainer page for a general audience, embeds both diagrams |
+| `nse-agent-swarm.architecture.html` | Interactive architecture viewer (dark/light, guided views, source links) |
+| `nse-agent-swarm.workflow.html` | Interactive timeline / workflow viewer |
+| `nse-agent-swarm.workflow.json` | Workflow source (Archify schema v2) |
+| `deliver-workflow.json` | Workflow delivery receipt |
+| `linkedin-post.md` | Post draft |
+| `assets/` | PNG crops for mobile and social preview |
 | `nse-agent-swarm.architecture.json` | Typed Archify IR source |
 | `deliver.json` | Archify delivery receipt (9/9 checks, SHA-256 of spec + artifact) |
 | `visual.json` | Browser visual-check receipt (1440×900, 2048×1320, light + dark) |

@@ -1,0 +1,236 @@
+{
+  "schema_version": 2,
+  "diagram_type": "workflow",
+  "meta": {
+    "title": "From Problem Statement to Checked Proof",
+    "output": "nse-agent-swarm.workflow.html",
+    "quality_profile": "showcase",
+    "views": [
+      {
+        "id": "seed-and-warmup",
+        "label": "Seed and warm up",
+        "focus": [
+          "seed",
+          "euler",
+          "groups"
+        ],
+        "note": "Operators seed rival framings; a ~100-agent group solves the easier Euler case first and re-seeds the main swarm."
+      },
+      {
+        "id": "search-loop",
+        "label": "Search and consolidate",
+        "focus": [
+          "groups",
+          "redirect",
+          "codex"
+        ],
+        "note": "Groups search in parallel; Codex merges their best ideas and re-prompts them. Operators shift compute and swap models mid-run."
+      },
+      {
+        "id": "prove-and-check",
+        "label": "Formalize and check",
+        "focus": [
+          "codex",
+          "lean",
+          "comparator"
+        ],
+        "note": "The consolidated argument is rewritten in Lean 4 by GPT-6 Astra and replayed by Comparator against reference statements."
+      }
+    ]
+  },
+  "lanes": [
+    {
+      "id": "ops",
+      "label": "Human operators"
+    },
+    {
+      "id": "swarm",
+      "label": "Agent swarm"
+    },
+    {
+      "id": "codex",
+      "label": "Codex"
+    },
+    {
+      "id": "check",
+      "label": "Formalize + verify"
+    }
+  ],
+  "phases": [
+    {
+      "id": "seed",
+      "label": "Seed",
+      "fromCol": 0,
+      "toCol": 0
+    },
+    {
+      "id": "search",
+      "label": "Search · Sep 1–5 · 88 h",
+      "fromCol": 1,
+      "toCol": 3,
+      "variant": "emphasis"
+    },
+    {
+      "id": "check",
+      "label": "Prove + check · 17 h",
+      "fromCol": 4,
+      "toCol": 5,
+      "variant": "dashed"
+    }
+  ],
+  "groups": [
+    {
+      "id": "loop",
+      "label": "Consolidation loop",
+      "lane": "swarm",
+      "fromCol": 2,
+      "toCol": 3,
+      "variant": "emphasis"
+    }
+  ],
+  "mainPath": [
+    "seed",
+    "euler",
+    "groups",
+    "codex",
+    "lean",
+    "comparator"
+  ],
+  "nodes": [
+    {
+      "id": "seed",
+      "lane": "ops",
+      "col": 0,
+      "type": "frontend",
+      "label": "Seed Variants",
+      "sublabel": "proof vs disproof"
+    },
+    {
+      "id": "redirect",
+      "lane": "ops",
+      "col": 3,
+      "type": "frontend",
+      "label": "Steer Run",
+      "sublabel": "compute + model swap"
+    },
+    {
+      "id": "euler",
+      "lane": "swarm",
+      "col": 1,
+      "type": "backend",
+      "label": "Euler Warm-up",
+      "sublabel": "~100 agents · 50 h"
+    },
+    {
+      "id": "groups",
+      "lane": "swarm",
+      "col": 2,
+      "type": "backend",
+      "label": "Agent Groups",
+      "sublabel": "~10k agents",
+      "tag": "cached web + code"
+    },
+    {
+      "id": "codex",
+      "lane": "codex",
+      "col": 3,
+      "type": "backend",
+      "label": "Consolidate",
+      "sublabel": "merge group insights"
+    },
+    {
+      "id": "lean",
+      "lane": "check",
+      "col": 4,
+      "type": "backend",
+      "label": "Lean Formalize",
+      "sublabel": "GPT-6 Astra"
+    },
+    {
+      "id": "comparator",
+      "lane": "check",
+      "col": 5,
+      "type": "security",
+      "label": "Comparator",
+      "sublabel": "replay named theorems",
+      "tag": "3 axioms only"
+    }
+  ],
+  "edges": [
+    {
+      "from": "seed",
+      "to": "euler",
+      "label": "prompt",
+      "variant": "emphasis"
+    },
+    {
+      "from": "euler",
+      "to": "groups",
+      "label": "Euler result as seed",
+      "variant": "emphasis"
+    },
+    {
+      "from": "redirect",
+      "to": "groups",
+      "label": "mid-run",
+      "variant": "dashed"
+    },
+    {
+      "from": "groups",
+      "to": "codex",
+      "label": "intermediate ideas",
+      "variant": "emphasis"
+    },
+    {
+      "from": "codex",
+      "to": "groups",
+      "label": "re-prompt",
+      "variant": "dashed",
+      "role": "return",
+      "route": "return-left",
+      "fromSide": "left",
+      "toSide": "left"
+    },
+    {
+      "from": "codex",
+      "to": "lean",
+      "label": "consolidated proof",
+      "variant": "emphasis"
+    },
+    {
+      "from": "lean",
+      "to": "comparator",
+      "label": "solution modules",
+      "variant": "security"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "Why groups, not one chat",
+      "items": [
+        "Each group holds a different framing of the same question",
+        "Agents talk only inside their group, so groups stay diverse",
+        "Parallel search beats one long conversation on hard problems"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "Where humans sit",
+      "items": [
+        "Choose framings, allocate compute, swap models",
+        "Run Codex to merge ideas across groups",
+        "No hand-written mathematics"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "Why trust the output",
+      "items": [
+        "Lean 4 rechecks every step mechanically",
+        "Comparator compares against an independent statement of the problem",
+        "Only three standard axioms are permitted"
+      ]
+    }
+  ]
+}

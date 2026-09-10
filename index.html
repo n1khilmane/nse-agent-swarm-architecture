@@ -1,0 +1,182 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>How 10,000 AI agents worked on a 90-year-old math problem</title>
+<meta name="description" content="The agent architecture behind OpenAI's Navier–Stokes result, explained without the mathematics: how the swarm was created, how each agent was set up, and how the answer was checked.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="How 10,000 AI agents worked on a 90-year-old math problem">
+<meta property="og:description" content="The agent architecture behind OpenAI's Navier–Stokes result, explained without the math.">
+<meta property="og:image" content="https://nikhilmane.com/nse-agent-swarm-architecture/assets/share-card.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:url" content="https://nikhilmane.com/nse-agent-swarm-architecture/">
+<meta name="twitter:card" content="summary_large_image">
+<style>
+  :root{--bg:#fbfbf9;--fg:#1a1a1a;--muted:#5b5b57;--line:#e4e4df;--accent:#0f766e;--accent-soft:#e6f4f1;--card:#ffffff;--amber:#b45309;--amber-soft:#fef3e2}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--fg);font:17px/1.6 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif}
+  a{color:var(--accent)}
+  .wrap{max-width:760px;margin:0 auto;padding:0 20px}
+  .wide{max-width:1180px;margin:0 auto;padding:0 20px}
+  header{padding:56px 0 24px}
+  .kicker{font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);font-weight:600}
+  h1{font-size:clamp(30px,5vw,44px);line-height:1.15;margin:10px 0 14px;letter-spacing:-.01em}
+  .lede{font-size:20px;color:var(--muted);margin:0 0 18px}
+  .byline{font-size:14px;color:var(--muted)}
+  h2{font-size:26px;margin:56px 0 12px;letter-spacing:-.01em}
+  h3{font-size:19px;margin:28px 0 8px}
+  p{margin:0 0 16px}
+  .tldr{background:var(--accent-soft);border:1px solid #cfe7e2;border-radius:12px;padding:18px 22px;margin:24px 0}
+  .tldr strong{color:var(--accent)}
+  .tldr ol{margin:8px 0 0;padding-left:22px}
+  .tldr li{margin:6px 0}
+  figure{margin:20px 0}
+  figcaption{font-size:14px;color:var(--muted);margin-top:8px}
+  .frame{border:1px solid var(--line);border-radius:12px;overflow:hidden;background:#fff}
+  .frame iframe{display:block;width:100%;height:1000px;border:0}
+  .frame.tall iframe{height:1480px}
+  .frame img{display:block;width:100%;height:auto}
+  .desktop-only{display:block}.mobile-only{display:none}
+  @media (max-width:900px){.desktop-only{display:none}.mobile-only{display:block}}
+  .open{display:inline-block;margin-top:8px;font-size:14px}
+  .steps{counter-reset:s;list-style:none;padding:0;margin:0}
+  .steps li{counter-increment:s;position:relative;padding:14px 0 14px 54px;border-top:1px solid var(--line)}
+  .steps li:last-child{border-bottom:1px solid var(--line)}
+  .steps li::before{content:counter(s,decimal-leading-zero);position:absolute;left:0;top:14px;font-weight:700;color:var(--accent);font-size:15px;letter-spacing:.04em}
+  .steps b{display:block;margin-bottom:2px}
+  .steps span{color:var(--muted)}
+  table{width:100%;border-collapse:collapse;margin:16px 0;font-size:16px}
+  th,td{text-align:left;padding:10px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+  th{font-size:13px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:600}
+  td:first-child{white-space:nowrap;font-variant-numeric:tabular-nums;font-weight:600}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin:18px 0}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px}
+  .card b{display:block;margin-bottom:6px}
+  .card p{margin:0;font-size:15px;color:var(--muted)}
+  .note{background:var(--amber-soft);border:1px solid #f3d9b1;border-radius:12px;padding:14px 18px;font-size:15px;color:#6b3f0a}
+  footer{margin:64px 0 40px;padding-top:20px;border-top:1px solid var(--line);font-size:14px;color:var(--muted)}
+  .src li{margin:6px 0}
+  code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.92em;background:#f1f1ec;padding:1px 5px;border-radius:4px}
+</style>
+</head>
+<body>
+
+<header class="wrap">
+  <div class="kicker">Agent architecture · explained without the math</div>
+  <h1>How 10,000 AI agents worked on a 90-year-old math problem</h1>
+  <p class="lede">In September 2026 OpenAI said a swarm of AI agents resolved the Navier–Stokes problem, one of the seven Millennium Prize questions. The papers are 220 pages of analysis. This page skips the analysis and explains the part that matters to builders: how the agents were organised, what each one could do, and how the answer was checked.</p>
+  <p class="byline">By Nikhil Mane · Diagrams generated with <a href="https://github.com/tt-a1i/archify">Archify</a> from OpenAI's published description and the public Lean repository · <a href="https://github.com/n1khilmane/nse-agent-swarm-architecture">Source on GitHub</a></p>
+</header>
+
+<main>
+<section class="wrap">
+  <div class="tldr">
+    <strong>In five sentences</strong>
+    <ol>
+      <li>Agents were split into <b>groups</b>, and each group was given a different framing of the same question. Some were told to prove the fluid stays smooth, others to construct a case where it does not.</li>
+      <li>Each agent ran on an internal model stronger than GPT-6 Astra, inside an isolated sandbox with two tools: a cached copy of the internet and the ability to run code. Agents talked only to their own group.</li>
+      <li>A small group of about 100 agents first solved an easier, related problem (Euler) in about 50 hours. That result was fed to the main groups as a starting point.</li>
+      <li>Humans did not write mathematics. They chose the framings, moved compute between groups, swapped in a newer model mid-run, and used Codex to merge the best ideas across groups and re-prompt them.</li>
+      <li>The final argument was rewritten in the Lean 4 proof language and checked mechanically. Every step is machine-verified, using only three standard logical axioms.</li>
+    </ol>
+  </div>
+</section>
+
+<section class="wrap">
+  <h2>The question, in plain words</h2>
+  <p>The Navier–Stokes equations describe how fluids move: water in a pipe, air over a wing, smoke from a candle. Engineers have used them for nearly two centuries. The open question was whether a perfectly smooth flow can ever "blow up", meaning its speed becomes infinite at some point in finite time, or whether the equations always keep things smooth.</p>
+  <p>The Clay Mathematics Institute's official problem statement lists four ways to settle it. Two of them (call them A and B) mean proving that blow-up never happens. The other two (C and D) mean constructing a concrete example where it does. OpenAI's agents produced C and D: an explicit example, with a smooth external force, where the flow blows up.</p>
+  <p>That is all the mathematics you need for the rest of this page.</p>
+</section>
+
+<section class="wide">
+  <h2 style="max-width:760px;margin-left:auto;margin-right:auto">The architecture</h2>
+  <p style="max-width:760px;margin:0 auto 18px">Below is a system map of the run. It is interactive on desktop: click a numbered chapter at the top to walk through it, or click any box to see what it connects to. Source-linked boxes open the exact files in OpenAI's repository.</p>
+  <figure>
+    <div class="frame desktop-only"><iframe loading="lazy" title="Interactive architecture map of the agent swarm" src="nse-agent-swarm.architecture.html?theme=light"></iframe></div>
+    <div class="frame mobile-only"><a href="nse-agent-swarm.architecture.html?theme=light"><img src="assets/architecture.png" alt="Architecture map: problem variants feed a group scheduler that spawns agent groups; each group uses a frontier model and a tool sandbox; a Codex consolidator merges ideas into manuscripts, which are formalized in Lean and checked by Comparator."></a></div>
+    <figcaption>Twelve components, one main path. <a class="open" href="nse-agent-swarm.architecture.html?theme=light&present=1">Open full-screen ↗</a></figcaption>
+  </figure>
+</section>
+
+<section class="wrap">
+  <h3>Reading the map, left to right</h3>
+  <ol class="steps">
+    <li><b>Problem variants</b><span>The same problem written four ways. Groups aimed at a proof (A/B) and groups aimed at a counter-example (C/D) ran side by side, so the swarm did not have to guess which direction was right.</span></li>
+    <li><b>Group scheduler</b><span>Launches groups of varying sizes. The group that produced the Navier–Stokes result ran on the order of 10,000 agents at once.</span></li>
+    <li><b>Agent groups</b><span>Agents exchange messages inside their group only. Keeping groups separate keeps their approaches different; no single idea can take over the whole swarm early.</span></li>
+    <li><b>Frontier model + tool sandbox</b><span>Every agent is the same recipe: an internal model more capable than GPT-6 Astra, a cached snapshot of the internet to read, and a code runner to test ideas numerically. When a further-trained checkpoint became available mid-run, agents were switched to it.</span></li>
+    <li><b>Euler warm-up</b><span>Before the big run, about 100 agents spent about 50 hours on the unforced Euler equations, a simpler cousin of Navier–Stokes. They found a blow-up there. That told the team which direction was promising and gave the main groups a worked example to build on.</span></li>
+    <li><b>Codex consolidator</b><span>Humans used Codex to read the intermediate results from different groups, pull out the most useful insights, and write follow-up prompts that fed those insights back in. This is the only place ideas cross group boundaries.</span></li>
+    <li><b>Lean formalizer</b><span>Once the argument was written up, GPT-6 Astra spent 17 hours translating it into Lean 4, a language where a computer checks every logical step. The public repository holds 2,659 Lean files and reports zero unproven gaps.</span></li>
+    <li><b>Comparator check</b><span>An independent tool replays the named theorems against a separately written statement of the problem and confirms that only three standard axioms were used. This is what makes the result checkable by anyone, without trusting the model or the authors.</span></li>
+  </ol>
+</section>
+
+<section class="wide">
+  <h2 style="max-width:760px;margin-left:auto;margin-right:auto">The timeline</h2>
+  <p style="max-width:760px;margin:0 auto 18px">The same run as a workflow. Lanes show who did what; the emphasised band is the 88-hour search.</p>
+  <figure>
+    <div class="frame tall desktop-only"><iframe loading="lazy" title="Workflow from problem statement to checked proof" src="nse-agent-swarm.workflow.html?theme=light"></iframe></div>
+    <div class="frame mobile-only"><a href="nse-agent-swarm.workflow.html?theme=light"><img src="assets/workflow.png" alt="Workflow: seed variants, Euler warm-up, agent groups with a consolidation loop through Codex, then Lean formalization and Comparator check."></a></div>
+    <figcaption>Seed → search → prove and check. <a class="open" href="nse-agent-swarm.workflow.html?theme=light&present=1">Open full-screen ↗</a></figcaption>
+  </figure>
+</section>
+
+<section class="wrap">
+  <h2>The numbers OpenAI reported</h2>
+  <table>
+    <thead><tr><th>Figure</th><th>What it refers to</th></tr></thead>
+    <tbody>
+      <tr><td>~10,000</td><td>Concurrent agents in the group that produced the Navier–Stokes result</td></tr>
+      <tr><td>~100 · ~50 h</td><td>Agents and time for the Euler warm-up result</td></tr>
+      <tr><td>88 h</td><td>From first agents launched (Sep 1) to the Navier–Stokes resolution (Sep 5)</td></tr>
+      <tr><td>2.7 M · 130 B</td><td>Messages sent and output tokens used on Navier–Stokes alone</td></tr>
+      <tr><td>4.9 M · 300 B</td><td>Messages and output tokens across every problem attempted in the run</td></tr>
+      <tr><td>17 h</td><td>Lean formalization and checking, by GPT-6 Astra</td></tr>
+      <tr><td>2,659 · 0</td><td>Lean files in the public repository, and unproven gaps (<code>sorry_count</code>)</td></tr>
+      <tr><td>3</td><td>Axioms permitted by the check: <code>propext</code>, <code>Quot.sound</code>, <code>Classical.choice</code></td></tr>
+    </tbody>
+  </table>
+</section>
+
+<section class="wrap">
+  <h2>Why a proof written by AI can be trusted</h2>
+  <p>Language models can produce convincing text that is wrong. The reason this result is different is the last two boxes on the map.</p>
+  <p><b>Lean</b> is a programming language for mathematics. A theorem written in Lean is either accepted by the checker or it is not; there is no partial credit and no room for a persuasive but broken step. The agents' 220 pages of prose were translated into Lean and the checker accepted all of it.</p>
+  <p><b>Comparator</b> answers a second question: did they prove the <em>right</em> statement? It takes a statement of the problem written independently (adapted from Google DeepMind's Formal Conjectures project), replays the proof against it with a separate small checker, and lists the axioms used. Anyone can run it from the repository with three commands.</p>
+  <div class="note">Status as of publication: OpenAI's repository marks the review as self-assessed. The formal check is complete and reproducible; human peer review by the mathematics community is ongoing.</div>
+</section>
+
+<section class="wrap">
+  <h2>What carries over to ordinary agent systems</h2>
+  <p>You do not need 10,000 agents to use the ideas. Five patterns from this run apply to any team building with agents today.</p>
+  <div class="grid">
+    <div class="card"><b>Diversity by framing, not by temperature</b><p>Give separate groups genuinely different versions of the task. Different questions produce different approaches far more reliably than sampling noise does.</p></div>
+    <div class="card"><b>Isolate groups, then merge deliberately</b><p>Agents that all talk to each other converge early. Keep communication inside groups and make cross-group sharing an explicit, curated step.</p></div>
+    <div class="card"><b>Warm up on the easier cousin</b><p>A small run on a simpler related problem tells you which direction is promising and gives the main run a worked example to start from.</p></div>
+    <div class="card"><b>Humans steer, they do not solve</b><p>The human jobs were framing, compute allocation, model swaps and consolidation. Design your operator loop around those four controls.</p></div>
+    <div class="card"><b>Verify mechanically, not by reading</b><p>The output was accepted because a checker said so, not because it looked right. Wherever you can, make the final gate a machine check, not a review.</p></div>
+  </div>
+</section>
+
+<section class="wrap">
+  <h2>Sources</h2>
+  <ul class="src">
+    <li><a href="https://openai.com/index/navier-stokes-solution/">OpenAI, "On the Navier–Stokes Millennium Prize Problem"</a> — the primary description of the agent run</li>
+    <li><a href="https://github.com/openai/NavierStokesAndEuler">openai/NavierStokesAndEuler</a> — the Lean formalization; diagram source links are pinned to commit <code>f9e8bc5b</code></li>
+    <li><a href="https://cdn.openai.com/pdf/32d9f210-8b73-45e0-91bc-82a30aef8a9a/navier-stokes.pdf">Navier–Stokes paper</a> (166 pp) and <a href="https://cdn.openai.com/pdf/315b36cd-ec98-4023-8342-93345194ece1/euler.pdf">Euler paper</a> (57 pp)</li>
+    <li><a href="https://www.unite.ai/openai-says-internal-ai-system-resolved-the-navier-stokes-problem/">Unite.AI</a>, <a href="https://venturebeat.com/technology/openai-solves-longstanding-math-problem-with-10-000-agent-swarm-but-cant-rule-out-benefitting-from-a-researchers-private-codex-data">VentureBeat</a>, <a href="https://andrew.ooo/answers/openai-navier-stokes-proof-10000-agents-september-2026-explained/">andrew.ooo</a> — secondary reporting used to cross-check figures</li>
+    <li><a href="https://github.com/tt-a1i/archify">Archify</a> — the diagrams above are validated, deterministic renders; delivery receipts are in the repository</li>
+  </ul>
+  <p style="font-size:14px;color:var(--muted)">All figures are as reported by OpenAI. The repository contains the proof output, not the agent code; the swarm design is reconstructed from OpenAI's written description.</p>
+</section>
+</main>
+
+<footer class="wrap">
+  Nikhil Mane · <a href="https://github.com/n1khilmane/nse-agent-swarm-architecture">github.com/n1khilmane/nse-agent-swarm-architecture</a>
+</footer>
+</body>
+</html>

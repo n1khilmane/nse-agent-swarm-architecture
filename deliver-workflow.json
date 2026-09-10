@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "ok": true,
+  "command": "deliver",
+  "type": "workflow",
+  "input": "/private/tmp/claude-501/-Users-nikhilmane/f8a5d672-92ab-4b3f-b07d-40623cca7316/scratchpad/out/nse-agent-swarm.workflow.json",
+  "output": "/private/tmp/claude-501/-Users-nikhilmane/f8a5d672-92ab-4b3f-b07d-40623cca7316/scratchpad/out/nse-agent-swarm.workflow.html",
+  "specification": {
+    "sha256": "66e265f3fd2925d90e7877d28ad4dca8268f75bbbda0b310c2520e5cd155b5d2",
+    "bytes": 5180
+  },
+  "artifact": {
+    "sha256": "3d438154e1a69ecd18a00eb79788968aca3652738e1893caff557c074a528935",
+    "bytes": 807535
+  },
+  "validation": {
+    "checksPassed": 9,
+    "checkCount": 9,
+    "compositionProfile": "showcase",
+    "compositionStatus": "pass",
+    "errors": 0,
+    "warnings": 0
+  }
+}
