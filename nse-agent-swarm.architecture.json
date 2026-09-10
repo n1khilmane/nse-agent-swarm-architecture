@@ -1,0 +1,398 @@
+{
+  "schema_version": 1,
+  "diagram_type": "architecture",
+  "meta": {
+    "title": "OpenAI Navier–Stokes Agent Swarm",
+    "output": "nse-agent-swarm.architecture.html",
+    "quality_profile": "showcase",
+    "repository": {
+      "url": "https://github.com/openai/NavierStokesAndEuler",
+      "revision": "f9e8bc5b38b6e212696e8a30e3e91517af887bbd"
+    },
+    "views": [
+      {
+        "id": "swarm-creation",
+        "label": "1 · Creating the swarm",
+        "focus": [
+          "seeds",
+          "humans",
+          "scheduler",
+          "groups",
+          "euler"
+        ],
+        "note": "Groups are seeded with competing problem variants; ~10k concurrent agents, ~100-agent Euler warm-up."
+      },
+      {
+        "id": "agent-programming",
+        "label": "2 · Programming an agent",
+        "focus": [
+          "model",
+          "groups",
+          "tools"
+        ],
+        "note": "Each agent = frontier model + isolated sandbox (cached web, code exec) + intra-group messaging."
+      },
+      {
+        "id": "cross-pollination",
+        "label": "3 · Cross-group consolidation",
+        "focus": [
+          "euler",
+          "groups",
+          "codex",
+          "paper"
+        ],
+        "note": "Euler result re-seeds NS groups; Codex merges promising intermediate ideas into the manuscript."
+      },
+      {
+        "id": "formal-check",
+        "label": "4 · Formalize and verify",
+        "focus": [
+          "paper",
+          "lean",
+          "comparator"
+        ],
+        "note": "GPT-6 Astra writes Lean 4; Comparator checks named theorems against reference statements."
+      }
+    ]
+  },
+  "components": [
+    {
+      "id": "seeds",
+      "type": "external",
+      "label": "Problem Variants",
+      "sublabel": "smoothness vs breakdown",
+      "pos": [
+        40,
+        240
+      ],
+      "size": [
+        150,
+        62
+      ]
+    },
+    {
+      "id": "humans",
+      "type": "external",
+      "label": "Human Orchestrators",
+      "sublabel": "no math content",
+      "pos": [
+        300,
+        40
+      ],
+      "size": [
+        150,
+        62
+      ],
+      "tag": "OpenAI"
+    },
+    {
+      "id": "scheduler",
+      "type": "backend",
+      "label": "Group Scheduler",
+      "sublabel": "~10k concurrent agents",
+      "pos": [
+        300,
+        240
+      ],
+      "size": [
+        150,
+        62
+      ]
+    },
+    {
+      "id": "euler",
+      "type": "backend",
+      "label": "Euler Warm-up Group",
+      "sublabel": "~100 agents · ~50 h",
+      "pos": [
+        300,
+        440
+      ],
+      "size": [
+        150,
+        62
+      ]
+    },
+    {
+      "id": "model",
+      "type": "backend",
+      "label": "Frontier Model",
+      "sublabel": "> GPT-6 Astra · hot-swapped",
+      "pos": [
+        560,
+        40
+      ],
+      "size": [
+        150,
+        62
+      ]
+    },
+    {
+      "id": "groups",
+      "type": "backend",
+      "label": "Agent Groups",
+      "sublabel": "intra-group messaging",
+      "pos": [
+        560,
+        240
+      ],
+      "size": [
+        150,
+        62
+      ]
+    },
+    {
+      "id": "tools",
+      "type": "cloud",
+      "label": "Tool Sandbox",
+      "sublabel": "cached web · code exec",
+      "pos": [
+        560,
+        440
+      ],
+      "size": [
+        150,
+        62
+      ]
+    },
+    {
+      "id": "codex",
+      "type": "backend",
+      "label": "Codex Consolidator",
+      "sublabel": "cross-group merge",
+      "pos": [
+        820,
+        240
+      ],
+      "size": [
+        150,
+        62
+      ],
+      "tag": "Codex"
+    },
+    {
+      "id": "paper",
+      "type": "database",
+      "label": "Proof Manuscripts",
+      "sublabel": "NS 165 pp · Euler 57 pp",
+      "pos": [
+        1080,
+        240
+      ],
+      "size": [
+        150,
+        62
+      ]
+    },
+    {
+      "id": "lean",
+      "type": "backend",
+      "label": "Lean Formalizer",
+      "sublabel": "GPT-6 Astra · 17 h",
+      "pos": [
+        1080,
+        440
+      ],
+      "size": [
+        150,
+        62
+      ],
+      "sources": [
+        {
+          "path": "NavierStokes/ComparatorSolution.lean",
+          "line": 16,
+          "end_line": 28,
+          "label": "theorems (C) and (D)"
+        },
+        {
+          "path": "Euler/Solution.lean",
+          "line": 33,
+          "end_line": 50,
+          "label": "Euler main theorems"
+        },
+        {
+          "path": "lakefile.toml",
+          "line": 1,
+          "end_line": 28,
+          "label": "Lean 4.34.0-rc2 + Mathlib targets"
+        }
+      ]
+    },
+    {
+      "id": "comparator",
+      "type": "security",
+      "label": "Comparator Check",
+      "sublabel": "nanoda · self-assessed",
+      "pos": [
+        820,
+        440
+      ],
+      "size": [
+        150,
+        62
+      ],
+      "sources": [
+        {
+          "path": "ComparatorChallenges/NavierStokes.json",
+          "line": 1,
+          "end_line": 14,
+          "label": "challenge vs solution module"
+        },
+        {
+          "path": "ComparatorChallenges/README.md",
+          "line": 3,
+          "end_line": 9,
+          "label": "lake exe comparator"
+        },
+        {
+          "path": "formalization.yaml",
+          "line": 96,
+          "end_line": 104,
+          "label": "automation: agent / Codex"
+        }
+      ],
+      "tag": "GitHub"
+    }
+  ],
+  "boundaries": [
+    {
+      "kind": "region",
+      "label": "Swarm run · Sep 1–5 2026 · 88 h · 2.7M msgs · 130B output tokens",
+      "wraps": [
+        "scheduler",
+        "euler",
+        "model",
+        "groups",
+        "tools"
+      ],
+      "pad": 22
+    },
+    {
+      "kind": "security-group",
+      "label": "isolated agent environments",
+      "wraps": [
+        "groups",
+        "tools"
+      ],
+      "pad": 14
+    },
+    {
+      "kind": "region",
+      "label": "Formalization · Sep 5–8 · Lean 4 + Mathlib",
+      "wraps": [
+        "lean",
+        "comparator"
+      ],
+      "pad": 22
+    }
+  ],
+  "connections": [
+    {
+      "from": "seeds",
+      "to": "scheduler",
+      "label": "A/B vs C/D prompts"
+    },
+    {
+      "from": "humans",
+      "to": "scheduler",
+      "label": "configure, redirect compute",
+      "variant": "dashed",
+      "labelAt": [
+        375,
+        171
+      ]
+    },
+    {
+      "from": "scheduler",
+      "to": "groups",
+      "label": "spawn groups"
+    },
+    {
+      "from": "scheduler",
+      "to": "euler",
+      "label": "warm-up",
+      "labelAt": [
+        375,
+        371
+      ]
+    },
+    {
+      "from": "euler",
+      "to": "groups",
+      "label": "Euler blowup as seed",
+      "variant": "dashed"
+    },
+    {
+      "from": "model",
+      "to": "groups",
+      "label": "inference",
+      "labelAt": [
+        635,
+        171
+      ]
+    },
+    {
+      "from": "groups",
+      "to": "tools",
+      "label": "run code · read cache",
+      "labelAt": [
+        635,
+        371
+      ]
+    },
+    {
+      "from": "groups",
+      "to": "codex",
+      "label": "intermediate ideas"
+    },
+    {
+      "from": "codex",
+      "to": "paper",
+      "label": "consolidated proof"
+    },
+    {
+      "from": "paper",
+      "to": "lean",
+      "label": "formalize",
+      "labelAt": [
+        1155,
+        371
+      ]
+    },
+    {
+      "from": "lean",
+      "to": "comparator",
+      "label": "check theorems",
+      "variant": "security"
+    }
+  ],
+  "cards": [
+    {
+      "dot": "cyan",
+      "title": "How the swarm is created",
+      "items": [
+        "~10,000 concurrent agents split into groups that only message inside their group",
+        "Groups seeded with rival framings: prove smoothness (A/B) or construct breakdown (C/D)",
+        "~100-agent Euler warm-up (~50 h) proved unforced blowup and set the direction"
+      ]
+    },
+    {
+      "dot": "amber",
+      "title": "How an agent is programmed",
+      "items": [
+        "Internal model stronger than GPT-6 Astra; agents switched to a newer checkpoint mid-run",
+        "Tools: cached internet snapshot + code execution in an isolated environment",
+        "Humans configure groups and reallocate compute; Codex merges ideas across groups"
+      ]
+    },
+    {
+      "dot": "emerald",
+      "title": "How the answer is checked",
+      "items": [
+        "GPT-6 Astra formalized both papers in Lean 4 in 17 h: 2,659 .lean files, ~641k lines, sorry_count 0",
+        "Comparator replays the named theorems against Formal Conjectures reference statements via nanoda; results published at github.com/openai/NavierStokesAndEuler",
+        "Axioms limited to propext, Quot.sound, Classical.choice; review status self-assessed"
+      ]
+    }
+  ]
+}

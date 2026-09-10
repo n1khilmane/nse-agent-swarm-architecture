@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "ok": true,
+  "command": "deliver",
+  "type": "architecture",
+  "input": "/private/tmp/claude-501/-Users-nikhilmane/f8a5d672-92ab-4b3f-b07d-40623cca7316/scratchpad/out/nse-agent-swarm.architecture.json",
+  "output": "/private/tmp/claude-501/-Users-nikhilmane/f8a5d672-92ab-4b3f-b07d-40623cca7316/scratchpad/out/nse-agent-swarm.architecture.html",
+  "specification": {
+    "sha256": "41261d57159f4644651618c43c87c8f4ed4c070baf99108fd5237ec33d549323",
+    "bytes": 8625
+  },
+  "artifact": {
+    "sha256": "b4cf40801efba882e32d46c0a35852b9229369289560c1ee4ef7f192c94ed74c",
+    "bytes": 818391
+  },
+  "validation": {
+    "checksPassed": 9,
+    "checkCount": 9,
+    "compositionProfile": "showcase",
+    "compositionStatus": "pass",
+    "errors": 0,
+    "warnings": 0
+  },
+  "evidence": {
+    "verified": true,
+    "repository": "https://github.com/openai/NavierStokesAndEuler",
+    "revision": "f9e8bc5b38b6e212696e8a30e3e91517af887bbd",
+    "references": 6
+  }
+}
