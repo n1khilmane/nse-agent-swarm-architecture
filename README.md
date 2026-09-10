@@ -4,7 +4,7 @@ Interactive [Archify](https://github.com/tt-a1i/archify) architecture diagram of
 agent swarm produced the finite-time blowup proofs published in
 [openai/NavierStokesAndEuler](https://github.com/openai/NavierStokesAndEuler).
 
-**Live viewer:** https://n1khilmane.github.io/nse-agent-swarm-architecture/nse-agent-swarm.architecture.html
+**Live viewer:** https://nikhilmane.com/nse-agent-swarm-architecture/nse-agent-swarm.architecture.html
 
 ![diagram](nse-agent-swarm.architecture.visual-check.1440x900.light.png)
 
